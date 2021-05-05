@@ -79,25 +79,16 @@
     //
 
     hasRowConflictAt: function(rowIndex) {
-      // create a current row variable
-      var currentRow = this.get(rowIndex); //this is the board that we're pulling the row from, used rows function in board visual to find this
-      // create a counter variable
-      var counter = 0; // starting with belief that there is no conflicts
-      // iterate over that row variable
+      var currentRow = this.get(rowIndex);
+      var counter = 0;
+
       for (var i = 0; i < currentRow.length; i++) {
-      // if the current row is equal to 1
-        // add one to the counter variable
         if (currentRow[i] === 1) {
           counter++;
         }
       }
-      // After done iterating, if the counter variable is greater than zero, return true otherwise return false
-      // cannot be zero b/c when entire board visual light up, so that means this is always true.. the first if (row[i]) is the placement! So counter must be greater than 1 b/c it'll check it afterwards
-      if (counter > 1) {
-        return true;
-      } else {
-        return false;
-      }
+
+      return counter > 1;
     },
 
     /*
@@ -112,18 +103,14 @@
     */
 
     hasAnyRowConflicts: function() {
-      // create a board variable -- row function in the board visual
       var board = this.rows();
 
-      // iterate over that board variable
       for (var i = 0; i < board.length; i++) {
-      // check if there is a conflict using the other helper function hasRowConflict
         if (this.hasRowConflictAt(i)) {
-        // if there is then return true,
           return true;
         }
       }
-      // return false outside the for-loop
+
       return false;
     },
 
@@ -143,21 +130,50 @@
     // COLUMNS - run from top to bottom
     // --------------------------------------------------------------
     //
-    // test if a specific column on this board contains a conflict
+
     hasColConflictAt: function(colIndex) {
-      return false; // fixme
+      var board = this.rows();
+      var counter = 0;
+
+      for (var i = 0; i < board.length; i++) {
+        if (board[i][colIndex] === 1) {
+          counter++;
+        }
+      }
+
+      return counter > 1;
     },
 
     /*
+    justification: test if a specific column on this board contains a conflict
+    i: colIndex - an integar that represents which square within the column you're on
+    o: a boolean that indicates if there are column conflicts or not
+    c: none
+    e: none
+
     - when changing boolean to 'true', entire board lights up
+    - since the board has an array of rows, but each column is in different parts of the array, need to access first the array then the column index
     */
 
-    // test if any columns on this board contain conflicts
+
     hasAnyColConflicts: function() {
-      return false; // fixme
+      var board = this.rows();
+
+      for (var i = 0; i < board.length; i++) {
+        if (this.hasColConflictAt(i)) {
+          return true;
+        }
+      }
+
+      return false;
     },
 
     /*
+    justification: test if any columns on this board contain conflicts
+    i: nothing
+    o: a boolean that indicates if there are column conflicts or not
+    c: none
+    e: none
     - when changing boolean to 'true', board does not light up. Can this work in conjuction with hasColConflictAt func? b/c if there is a conflict ANYWHERE, then true.
     */
 
@@ -165,13 +181,31 @@
     // Major Diagonals - go from top-left to bottom-right
     // --------------------------------------------------------------
     //
-    // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      var board = this.rows();
+      var majorDiagonalIndex = this._getFirstRowColumnIndexForMajorDiagonalOn(rowIndex, majorDiagonalColumnIndexAtFirstRow);
+      var counter = 0;
+
+
     },
     /*
-    - when changing boolean to 'true', entire board lights up
+      _getFirstRowColumnIndexForMajorDiagonalOn: function(rowIndex, colIndex) {
+      return colIndex - rowIndex;
+    },
+
+    justification: test if a specific major diagonal on this board contains a conflict
+    i: majorDiagonalColumnIndexAtFirstRow: the col index in the nth row for the major diagonal
+    [0 1] <- row index 0, column index 1
+    [1 0] <- row index 1, column index 0
+
+    o: a boolean value that indicates if there are any major diagonal conflicts
+    c: none
+    e: none
+
+    this takes in a helper function that finds the index of the majorDiagonalIndex
     */
+
+
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
@@ -179,7 +213,7 @@
     },
 
     /*
-    - when changing boolean to 'true', board does not light up. Can this work in conjuction with hasRowConflictAt func? b/c if there is a conflict ANYWHERE, then true.
+
     */
 
     // Minor Diagonals - go from top-right to bottom-left
@@ -191,7 +225,7 @@
     },
 
     /*
-    - when changing boolean to 'true', entire board lights up
+
     */
 
     // test if any minor diagonals on this board contain conflicts
@@ -200,7 +234,7 @@
     }
 
     /*
-    - when changing boolean to 'true', board does not light up. Can this work in conjuction with hasRowConflictAt func? b/c if there is a conflict ANYWHERE, then true.
+
     */
 
     /*--------------------  End of Helper Functions  ---------------------*/
