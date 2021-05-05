@@ -91,17 +91,6 @@
       return counter > 1;
     },
 
-    /*
-    justification: test if a specific row on this board contains a conflict
-    i: rowIndex - an integar that represents which square within the row you're on
-    o: a boolean that indicates if there are row conflicts or not
-    c: none
-    e: none
-
-    - when changing boolean to 'true', entire board lights up
-    - this is testing one row at a time, if there is a row conflict at a square, we want to state true but we should also keep track of it since we're testing each square in the ENTIRE row
-    */
-
     hasAnyRowConflicts: function() {
       var board = this.rows();
 
@@ -113,19 +102,6 @@
 
       return false;
     },
-
-    /*
-    justification: test if any rows on this board contain conflicts
-    i: no inputs
-    o: a boolean that indicates if there are any row conflicts or not
-    c: none
-    e: none
-
-    - when changing boolean to 'true', board does not light up. Can this work in conjuction with hasRowConflictAt func? b/c if there is a conflict ANYWHERE, then true.
-    - this is testing the entire board's rows, so checking each square within each row, if a square has a conflict, we want to state true, since we're testing if conflict anywhere in the board. The hasRowConflictAt is already checking the entire row, should use somehow
-    */
-
-
 
     // COLUMNS - run from top to bottom
     // --------------------------------------------------------------
@@ -144,18 +120,6 @@
       return counter > 1;
     },
 
-    /*
-    justification: test if a specific column on this board contains a conflict
-    i: colIndex - an integar that represents which square within the column you're on
-    o: a boolean that indicates if there are column conflicts or not
-    c: none
-    e: none
-
-    - when changing boolean to 'true', entire board lights up
-    - since the board has an array of rows, but each column is in different parts of the array, need to access first the array then the column index
-    */
-
-
     hasAnyColConflicts: function() {
       var board = this.rows();
 
@@ -168,31 +132,17 @@
       return false;
     },
 
-    /*
-    justification: test if any columns on this board contain conflicts
-    i: nothing
-    o: a boolean that indicates if there are column conflicts or not
-    c: none
-    e: none
-    - when changing boolean to 'true', board does not light up. Can this work in conjuction with hasColConflictAt func? b/c if there is a conflict ANYWHERE, then true.
-    */
-
-
     // Major Diagonals - go from top-left to bottom-right
     // --------------------------------------------------------------
     //
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow, rowIndex) {
-      // create a board variable
       var board = this.rows();
       if (rowIndex === undefined) {
         rowIndex = 0;
       }
-      // utilize the helper function to get the major Diagonal Index
       var majorDiagonalIndex = this._getFirstRowColumnIndexForMajorDiagonalOn(rowIndex, majorDiagonalColumnIndexAtFirstRow);
       var counter = 0;
 
-      // iterate over the board, so the rows first, at it's first index - starting at the beginning
-      // then iterate it
       for (var i = 0; i < board.length; i++) {
         for (var j = majorDiagonalColumnIndexAtFirstRow; j < board.length; j++) {
           if (board[i][j] === 1 && this._getFirstRowColumnIndexForMajorDiagonalOn(i, j) === majorDiagonalIndex) {
@@ -206,26 +156,6 @@
 
       return false;
     },
-
-    /*
-      _getFirstRowColumnIndexForMajorDiagonalOn: function(rowIndex, colIndex) {
-      return colIndex - rowIndex;
-    },
-
-    justification: test if a specific major diagonal on this board contains a conflict
-    i: majorDiagonalColumnIndexAtFirstRow: the col index in the nth row for the major diagonal
-    [0 1] <- row index 0, column index 1
-    [1 0] <- row index 1, column index 0
-
-    o: a boolean value that indicates if there are any major diagonal conflicts
-    c: none
-    e: none
-
-    - this takes in column index that can then be put in helper function that finds the index of the majorDiagonalIndex
-    - we want to check the board by row at the inputted index's position b/c that's where the first major diagonal Index is. Then check from there is there are any conflictions
-    - count each time there is a '1'
-    - also need to get if at that particular index, if it is a major diagonal index
-    */
 
     hasAnyMajorDiagonalConflicts: function () {
       var rowsArr = this.rows();
@@ -246,42 +176,52 @@
       return false;
     },
 
-    /*
-    justification: test if any major diagonals on this board contain conflicts
-    i: nothing
-    o: a boolean
-    c: none
-    e: none
-
-    - have to check by row and then check by columns while utilizing the helper function: hasMajorDiagonalConflictAt
-    */
-
     // Minor Diagonals - go from top-right to bottom-left
     // --------------------------------------------------------------
     //
-    // test if a specific minor diagonal on this board contains a conflict
-    hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+
+    hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow, rowIndex) {
+      var board = this.rows();
+      if (rowIndex === undefined) {
+        rowIndex = 0;
+      }
+      var minorDiagonalIndex = this._getFirstRowColumnIndexForMinorDiagonalOn(rowIndex, minorDiagonalColumnIndexAtFirstRow);
+      var counter = 0;
+
+      for (var i = 0; i < board.length; i++) {
+        for (var j = minorDiagonalColumnIndexAtFirstRow; j >= 0; j--) {
+          if (board[i][j] === 1 && this._getFirstRowColumnIndexForMinorDiagonalOn(i, j) === minorDiagonalIndex) {
+            counter++;
+            if (counter > 1) {
+              return true;
+            }
+          }
+        }
+      }
+
+      return false;
     },
 
-    /*
-    _getFirstRowColumnIndexForMinorDiagonalOn: function(rowIndex, colIndex) {
-      return colIndex + rowIndex;
-    },
-
-    */
-
-    // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
-      return false; // fixme
+      var rowsArr = this.rows();
+      var columns = this.get('n');
+
+      for (var i = 0; i < columns; i++) {
+        if (this.hasMinorDiagonalConflictAt(i)) {
+          return true;
+        }
+      }
+
+      for (var j = 1; j < rowsArr.length; j++) {
+        if (this.hasMinorDiagonalConflictAt(columns - 1, j)) {
+          return true;
+        }
+      }
+
+      return false;
     }
 
-    /*
-
-    */
-
     /*--------------------  End of Helper Functions  ---------------------*/
-
 
   });
 
