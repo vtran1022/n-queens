@@ -181,13 +181,32 @@
     // Major Diagonals - go from top-left to bottom-right
     // --------------------------------------------------------------
     //
-    hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
+    hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow, rowIndex) {
+      // create a board variable
       var board = this.rows();
+      if (rowIndex === undefined) {
+        rowIndex = 0;
+      }
+      // utilize the helper function to get the major Diagonal Index
       var majorDiagonalIndex = this._getFirstRowColumnIndexForMajorDiagonalOn(rowIndex, majorDiagonalColumnIndexAtFirstRow);
       var counter = 0;
 
+      // iterate over the board, so the rows first, at it's first index - starting at the beginning
+      // then iterate it
+      for (var i = 0; i < board.length; i++) {
+        for (var j = majorDiagonalColumnIndexAtFirstRow; j < board.length; j++) {
+          if (board[i][j] === 1 && this._getFirstRowColumnIndexForMajorDiagonalOn(i, j) === majorDiagonalIndex) {
+            counter++;
+            if (counter > 1) {
+              return true;
+            }
+          }
+        }
+      }
 
+      return false;
     },
+
     /*
       _getFirstRowColumnIndexForMajorDiagonalOn: function(rowIndex, colIndex) {
       return colIndex - rowIndex;
@@ -202,18 +221,39 @@
     c: none
     e: none
 
-    this takes in a helper function that finds the index of the majorDiagonalIndex
+    - this takes in column index that can then be put in helper function that finds the index of the majorDiagonalIndex
+    - we want to check the board by row at the inputted index's position b/c that's where the first major diagonal Index is. Then check from there is there are any conflictions
+    - count each time there is a '1'
+    - also need to get if at that particular index, if it is a major diagonal index
     */
 
+    hasAnyMajorDiagonalConflicts: function () {
+      var rowsArr = this.rows();
+      var columns = this.get('n');
 
+      for (var i = 0; i < columns; i++) {
+        if (this.hasMajorDiagonalConflictAt(i)) {
+          return true;
+        }
+      }
 
-    // test if any major diagonals on this board contain conflicts
-    hasAnyMajorDiagonalConflicts: function() {
-      return false; // fixme
+      for (var j = 1; j < rowsArr.length; j++) {
+        if (this.hasMajorDiagonalConflictAt(0, j)) {
+          return true;
+        }
+      }
+
+      return false;
     },
 
     /*
+    justification: test if any major diagonals on this board contain conflicts
+    i: nothing
+    o: a boolean
+    c: none
+    e: none
 
+    - have to check by row and then check by columns while utilizing the helper function: hasMajorDiagonalConflictAt
     */
 
     // Minor Diagonals - go from top-right to bottom-left
@@ -225,6 +265,9 @@
     },
 
     /*
+    _getFirstRowColumnIndexForMinorDiagonalOn: function(rowIndex, colIndex) {
+      return colIndex + rowIndex;
+    },
 
     */
 
